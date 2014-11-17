@@ -1,5 +1,5 @@
 module FfmpegWrapper
-  class Format < OpenStruct
+  class Format < ::OpenStruct
     
   end
 end

@@ -4,6 +4,8 @@ module FfmpegWrapper
   # Your code goes here...
 end
 
+require 'ostruct'
+
 require 'ffmpeg_wrapper/decoder.rb'
 require 'ffmpeg_wrapper/encoder.rb'
 require 'ffmpeg_wrapper/ffmpeg.rb'
