@@ -8,6 +8,7 @@ module FfmpegWrapper
   # extract Streams objects.
   class MediaFile
     PROBECMD = 'ffprobe -v quiet -of json '
+    attr_reader :filename
     # Arguments:
     # * filename: String (Mandatory)
     def initialize(filename, options = {})
