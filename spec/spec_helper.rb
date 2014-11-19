@@ -87,6 +87,8 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+  config.before(:all) { `rake test:prepare` }
+  config.after(:all)  { `rake test:cleanup` }
 end
 
 require 'ffmpeg_wrapper'
