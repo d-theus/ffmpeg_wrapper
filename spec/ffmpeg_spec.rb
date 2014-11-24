@@ -3,56 +3,63 @@ require 'spec_helper.rb'
 include FfmpegWrapper
 
 describe FFmpeg do
-  before(:all) { @ff = FFmpeg }
+  before(:each) { @ff = FFmpeg.new }
   subject { @ff }
   describe 'input functions: ' do
-    before(:each) do
-      FFmpeg.send(:setup)
-    end
-    let(:ins) { FFmpeg.instance_variable_get(:@inputs) }
-    let(:vids) { FFmpeg.instance_variable_get(:@videos) }
-    let(:auds) { FFmpeg.instance_variable_get(:@audios) }
+    let(:ins) { @ff.instance_variable_get(:@inputs) }
+    let(:vids) { @ff.instance_variable_get(:@videos) }
+    let(:auds) { @ff.instance_variable_get(:@audios) }
     it { should respond_to :media }
     it { should respond_to :video }
     it { should respond_to :audio }
     it '#media should modify @inputs, @videos and @audios'  do
-      expect { FFmpeg.media 'ololo' }
+      expect { @ff.media 'ololo' }
       .to change { ins.count }.from(0).to(1)
-      expect { FFmpeg.media 'ololo' }
+      expect { @ff.media 'ololo' }
       .to change { vids.count }.from(1).to(2)
-      expect { FFmpeg.media 'ololo' }
+      expect { @ff.media 'ololo' }
       .to change { auds.count }.from(2).to(3)
     end
     it '#video should modify @inputs and @videos only'  do
-      expect { FFmpeg.video 'ololo' }
+      expect { @ff.video 'ololo' }
       .to change { vids.count }.from(0).to(1)
-      expect { FFmpeg.video 'ololo' }
+      expect { @ff.video 'ololo' }
       .not_to change { auds.count }
-      expect { FFmpeg.video 'ololo' }
+      expect { @ff.video 'ololo' }
       .to change { ins.count }.from(2).to(3)
     end
     it '#audio should modify @inputs and @audios only'  do
-      expect { FFmpeg.audio 'ololo' }
+      expect { @ff.audio 'ololo' }
       .to change { auds.count }.from(0).to(1)
-      expect { FFmpeg.audio 'ololo' }
+      expect { @ff.audio 'ololo' }
       .not_to change { vids.count }
-      expect { FFmpeg.audio 'ololo' }
+      expect { @ff.audio 'ololo' }
       .to change { ins.count }.from(2).to(3)
     end
   end
   describe '#run:' do
     after(:each) { `killall ffmpeg &>/dev/null` }
-    it { should respond_to :run }
+    it 'Module should respond to .run' do
+      expect(FFmpeg).to respond_to :run
+    end
     it 'should make valid commands given valid input' do
       expect do
-        FFmpeg.run do |ff|
-          v1 = ff.media 'spec/media/video.avi'
-          a1 = ff.media 'spec/media/audio.mp3'
-          ff.map(v1, 0)
-          ff.map(a1, 0).applying acodec: 'libmp3lame'
-          ff.output 'spec/output/tmp.mp4'
+        FFmpeg.run do
+          v1 = media 'spec/media/video.avi'
+          a1 = media 'spec/media/audio.mp3'
+          map(v1, 0)
+          map(a1, 0).applying acodec: 'libmp3lame'
+          output 'spec/output/tmp.mp4'
         end
       end.not_to raise_error
+    end
+    it 'should provide access to external vars' do
+      file_name = 'spec/media/video.avi'
+      expect do
+        FFmpeg.run do
+          media file_name
+        end.not_to raise_error
+      end
     end
   end
 end
