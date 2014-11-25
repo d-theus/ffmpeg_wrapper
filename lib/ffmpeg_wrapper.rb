@@ -15,6 +15,7 @@ require 'ostruct'
 
 require 'ffmpeg_wrapper/hash.rb'
 require 'ffmpeg_wrapper/ffmpeg.rb'
+require 'ffmpeg_wrapper/ffprobe.rb'
 require 'ffmpeg_wrapper/format.rb'
 require 'ffmpeg_wrapper/stream.rb'
 require 'ffmpeg_wrapper/version.rb'
