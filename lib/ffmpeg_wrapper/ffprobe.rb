@@ -3,16 +3,27 @@ require 'json'
 module FfmpegWrapper
   class FFprobe
     class << self
-      def run(&block)
-        ff = FFprobe.new
+      # Execute ffprobe command.
+      # @param [String] filename
+      # @return [Hash]
+      # @example
+      #        info = FFprobe.run('video.mp4') do
+      #          show_streams
+      #          show_format
+      #        end
+      #        info                         #=> { "format" => ..., "streams"=>... }
+      #        info['format']['codec_type'] #=> 'video'
+      def run(filename, &block)
+        ff = FFprobe.new filename
         ff.instance_eval do
           @command << ' -v quiet -of json'
           instance_eval &block
-          fail 'No input specified' if @inputs.empty?
           @command << @show_specifiers.reduce(' ') do |acc, v|
             acc << " -#{v}"
             acc
           end
+          @command << ' ' << @options.to_shellflags
+          @command << ' ' << @input
           out = `#{@command} 2>/dev/null`
           begin
             JSON.parse out
@@ -23,20 +34,22 @@ module FfmpegWrapper
       end
     end
 
-    def initialize
+    # @param [String] filename
+    def initialize(filename)
+      @input = filename || fail(ArgumentError 'No input specified')
       @command = 'ffprobe '
       @show_specifiers = []
-      @inputs = []
+      @options = {}
     end
 
-    def input(filename, opts = {})
-      line = ''
-      opts.each do |k, v|
-        line << " -#{k} #{v}"
-      end
-      line << " -i #{filename}"
-      @inputs << line
+    # Specify input file options
+    # @param [Hash] options
+    def options(hash)
+      @options.merge! hash
     end
+    alias_method :option, :options
+
+    private
 
     def method_missing(meth, *args, &blk)
       case meth
@@ -47,9 +60,6 @@ module FfmpegWrapper
       end
     end
 
-    def loglevel(mode)
-      fail ArgumentError 'Unknown verbosity mode' unless LOGLEVELS.include? mode
-      @loglevel = mode
-    end
+
   end
 end
