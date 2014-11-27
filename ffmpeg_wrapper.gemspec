@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = FfmpegWrapper::VERSION
   spec.authors       = ['slowness']
   spec.email         = ['slma0x02@gmail.com']
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = 'Wrapper for FFmpeg.'
+  spec.description   = 'FFmpeg is a powerful video, audio or image editing tool \
+  with tons of useful (and not so) functions.'
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
