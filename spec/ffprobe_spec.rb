@@ -30,10 +30,22 @@ describe FFprobe do
         end
       end.to raise_error ArgumentError
     end
-    it 'returns ruby object' do
+    it 'returns ruby Hash' do
       expect(FFprobe.run(vid) do
         show_format
       end).to be_a Hash
+    end
+
+    let(:err) do
+      FFprobe.run('spec/media/nonmedia.mp4') do
+        show_format
+      end
+    end
+
+    it 'returned Hash contains errors if any' do
+      expect(err).to have_key 'errors'
+      expect(err['errors']).to be_a String
+      expect(err['errors']).not_to be_empty
     end
   end
   describe 'Info type specifiers: FFmpeg' do

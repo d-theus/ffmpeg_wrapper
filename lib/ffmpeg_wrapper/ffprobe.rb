@@ -26,9 +26,12 @@ module FfmpegWrapper
           @command << ' ' << @input
           out = `#{@command} 2>/dev/null`
           begin
-            JSON.parse out
-          rescue JSON::ParserError
-            raise 'FFprobe error. Check your command'
+            @result = JSON.parse out
+            fail if @result.keys.empty?
+          rescue
+            @result = { 'errors' => error }
+          ensure
+            return @result
           end
         end
       end
@@ -60,6 +63,10 @@ module FfmpegWrapper
       end
     end
 
-
+    def error
+      @command.gsub!('-v quiet', '-v error')
+      @command.gsub!('-of json', '')
+      `#{@command} 2>&1`
+    end
   end
 end
