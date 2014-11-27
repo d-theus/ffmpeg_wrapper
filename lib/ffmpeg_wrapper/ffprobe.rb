@@ -17,7 +17,7 @@ module FfmpegWrapper
         ff = FFprobe.new filename
         ff.instance_eval do
           @command << ' -v quiet -of json'
-          instance_eval &block
+          instance_eval &block if block
           @command << @show_specifiers.reduce(' ') do |acc, v|
             acc << " -#{v}"
             acc
