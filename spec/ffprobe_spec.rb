@@ -3,7 +3,6 @@ require 'json'
 
 include FfmpegWrapper
 
-
 describe FFprobe do
   FFprobe.class_eval { def stub; end }
   vid = 'spec/media/video.avi'
@@ -12,6 +11,11 @@ describe FFprobe do
   describe '#run' do
     subject { FFprobe }
     it { should respond_to(:run) }
+    it 'checks if block given' do
+      expect do
+        FFprobe.run(vid)
+      end.not_to raise_error
+    end
     it 'proper call does not raise' do
       expect do
         FFprobe.run(vid) do
