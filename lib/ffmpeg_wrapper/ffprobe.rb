@@ -30,6 +30,7 @@ module FfmpegWrapper
             fail if @result.keys.empty?
           rescue
             @result = { 'errors' => error }
+          # FIXME: Do not return from ensure
           ensure
             return @result
           end

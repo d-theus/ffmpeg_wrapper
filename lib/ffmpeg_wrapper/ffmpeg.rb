@@ -111,7 +111,7 @@ module FfmpegWrapper
       opts.each do |k, v|
         line << " -#{k} #{v}"
       end
-      line << "-i #{filename}"
+      line << " -i #{filename}"
       @inputs << line
       @n += 1
       @n - 1

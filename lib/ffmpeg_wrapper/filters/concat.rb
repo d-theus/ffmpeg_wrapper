@@ -15,7 +15,7 @@ module FfmpegWrapper
     def stream_map_for_video
       return if @videos.empty?
       line = ''
-      @videos.size.times do |file|
+      @videos.each do |file|
         line << " [#{file}:0] "
       end
       line
@@ -24,7 +24,7 @@ module FfmpegWrapper
     def stream_map_for_audio
       return if @audios.empty?
       line = ''
-      @audios.size.times do |file|
+      @audios.each do |file|
         line << " [#{file}:0] "
       end
       line
