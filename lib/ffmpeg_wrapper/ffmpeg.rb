@@ -8,6 +8,7 @@ module FfmpegWrapper
       @mappings = []
       @filters = []
       @n = 0
+      @result = {}
     end
     # Construct ffmpeg command using that
     # function, then execute. All opts hashe's
@@ -34,7 +35,7 @@ module FfmpegWrapper
         @command << ' 2>/dev/null'
         fail `#{@command} -v error 2>&1` unless system @command
       end
-      ff
+      ff.instance_variable_get(:@result)
     end
 
     # Adds input file, containing audio and video.

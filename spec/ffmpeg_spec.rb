@@ -38,10 +38,12 @@ describe FFmpeg do
     end
   end
   describe '#run:' do
-    after(:each) { `killall ffmpeg &>/dev/null` }
+    after(:all) { `killall ffmpeg &>/dev/null` }
+
     it 'Module should respond to .run' do
       expect(FFmpeg).to respond_to :run
     end
+
     it 'should make valid commands given valid input' do
       expect do
         FFmpeg.run do
@@ -53,13 +55,24 @@ describe FFmpeg do
         end
       end.not_to raise_error
     end
-    it 'should provide access to external vars' do
-      file_name = 'spec/media/video.avi'
-      expect do
-        FFmpeg.run do
-          media file_name
-        end.not_to raise_error
+
+    routine = proc do
+      fn = 'spec/media/video.mp4'
+      FFmpeg.run do
+        media fn
+        map(0).applying f: 'null'
+        output '/dev/null'
       end
+    end
+
+    it 'should provide access to external vars' do
+      expect do
+        routine[]
+      end.not_to raise_error
+    end
+
+    it 'returns hash' do
+      expect(routine[]).to be_a Hash
     end
   end
 end
