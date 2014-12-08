@@ -1,7 +1,7 @@
 module FfmpegWrapper
   class FFmpeg
     def initialize
-      @command = 'ffmpeg -y'
+      @command = 'ffmpeg -y -hide_banner'
       @inputs = []
       @audios = []
       @videos = []
@@ -9,6 +9,7 @@ module FfmpegWrapper
       @filters = []
       @n = 0
       @result = {}
+      @post_exec_hooks = []
     end
     # Construct ffmpeg command using that
     # function, then execute. All opts hashe's
@@ -32,8 +33,11 @@ module FfmpegWrapper
         @command << ' ' << @filters.join(' ') if @filters.any?
         @command << ' ' << @mappings.join(' ') if @mappings.any?
         @command << ' ' << @output if @output
-        @command << ' 2>/dev/null'
-        fail `#{@command} -v error 2>&1` unless system @command
+        @out = IO.popen(@command, err: [:child, :out]) do |io|
+          io.read
+        end
+        @post_exec_hooks.each { |h| instance_eval(&h) }
+        fail @out.to_s unless $?.success?
       end
       ff.instance_variable_get(:@result)
     end
@@ -117,5 +121,6 @@ module FfmpegWrapper
       @n += 1
       @n - 1
     end
+
   end
 end

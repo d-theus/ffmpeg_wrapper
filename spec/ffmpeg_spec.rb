@@ -39,9 +39,35 @@ describe FFmpeg do
   end
   describe '#run:' do
     after(:all) { `killall ffmpeg &>/dev/null` }
+    file_presence = ->() { File.exist?('spec/output/video.mp4') }
 
     it 'Module should respond to .run' do
       expect(FFmpeg).to respond_to :run
+    end
+
+    it 'produces output' do
+      expect do
+        FFmpeg.run do
+          media 'spec/media/video.mp4', t: 3
+          map(0).applying strict: '-2'
+          output 'spec/output/video.mp4'
+        end
+      end.to change { file_presence[] }.from(false).to(true)
+    end
+
+    it 'runs post_exec_hooks' do
+      $h1, $h2 = nil, nil
+      h1 = proc { $h1 = true }
+      h2 = proc { $h2 = true }
+      FFmpeg.run do
+        media 'spec/media/video.mp4', t: 3
+        map(0).applying strict: '-2'
+        @post_exec_hooks << h1
+        @post_exec_hooks << h2
+        output 'spec/output/video.mp4'
+      end
+      expect($h1).to be_truthy
+      expect($h2).to be_truthy
     end
 
     it 'should make valid commands given valid input' do

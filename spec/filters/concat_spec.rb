@@ -25,6 +25,5 @@ describe FFmpeg do
         output 'spec/output/out.mp4'
       end
     end.not_to raise_error
-    expect(@ff_run.instance_variable_get(:@command)).to include '-filter_complex'
   end
 end
