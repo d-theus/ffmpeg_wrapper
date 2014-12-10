@@ -12,6 +12,7 @@ module FfmpegWrapper
 end
 
 require 'ostruct'
+require 'logger'
 
 require 'ffmpeg_wrapper/hash.rb'
 require 'ffmpeg_wrapper/ffmpeg.rb'

@@ -25,7 +25,8 @@ module FfmpegWrapper
     #           # String returned from #map
     #           output 'out.mp3'
     #         end
-    def self.run(&block)
+    def self.run(*flags, &block)
+      lo = Logger.new(STDOUT) if flags.include?(:debug)
       ff = FFmpeg.new
       ff.instance_eval do
         instance_eval(&block)
@@ -33,6 +34,7 @@ module FfmpegWrapper
         @command << ' ' << @filters.join(' ') if @filters.any?
         @command << ' ' << @mappings.join(' ') if @mappings.any?
         @command << ' ' << @output if @output
+        lo.info @command if lo
         @out = IO.popen(@command, err: [:child, :out]) do |io|
           io.read
         end
