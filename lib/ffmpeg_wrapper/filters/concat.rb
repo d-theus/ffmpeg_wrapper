@@ -8,6 +8,10 @@ module FfmpegWrapper
       line << filter_complex(:audio)
       line << filter_complex(:video)
       @filters << line
+      mappings = []
+      mappings << (@videos.size > 1 ? '[v]' : @videos.first)
+      mappings << (@audios.size > 1 ? '[a]' : @audios.first)
+      mappings
     end
 
     private
